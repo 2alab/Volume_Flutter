@@ -2,6 +2,7 @@ package com.example.volume;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.media.AudioManager;
@@ -45,14 +46,15 @@ public class VolumePlugin extends ContentObserver implements MethodCallHandler {
 
 
         Context context = registrar.activeContext();
-        context.getContentResolver()//
-                .registerContentObserver(android.provider.Settings.System.CONTENT_URI,//
+        final ContentResolver contentResolver = context.getContentResolver();//
+
+        contentResolver.registerContentObserver(android.provider.Settings.System.CONTENT_URI,//
                         true, volumePlugin);
 
         registrar.addViewDestroyListener(new PluginRegistry.ViewDestroyListener() {
             @Override
             public boolean onViewDestroy(FlutterNativeView v) {
-                registrar.activity().getContentResolver().unregisterContentObserver(volumePlugin);
+                contentResolver.unregisterContentObserver(volumePlugin);
                 return true;
             }
         });
